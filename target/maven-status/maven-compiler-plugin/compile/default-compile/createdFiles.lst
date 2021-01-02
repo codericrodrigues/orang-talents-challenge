@@ -1,0 +1,4 @@
+orange\talents\challenge\model\PessoaModel.class
+orange\talents\challenge\repository\PessoaRepository.class
+orange\talents\challenge\controller\PessoaController.class
+orange\talents\challenge\OrangeTalentsChallengeApplication.class
