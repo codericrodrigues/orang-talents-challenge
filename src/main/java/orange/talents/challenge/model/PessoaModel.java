@@ -1,10 +1,14 @@
 package orange.talents.challenge.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.validator.constraints.br.CPF;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "pessoa")
@@ -12,22 +16,31 @@ public class PessoaModel {
 
     @Id
     @Column(name = "cpf")
-    private Long cpf;
+    @NotNull(message = "O CPF não pode ser vazio")
+    @CPF(message = "CPF Inválido")
+    private String cpf;
 
-    @Column(name = "email")
+    @Column(name = "email", length = 128, unique = true)
+    @NotNull(message = "O E-mail não pode ser vazio")
+    @Email(message = "E-mail Inválido")
     private String email;
 
     @Column(name = "nome")
+    @NotNull(message = "O Nome não pode ser vazio")
+    @Size(min=2, message= "Nome precisa ter no mínimo 2 caracteres")
     private String nome;
 
     @Column(name = "dt_nascimento")
-    private String nascimento;
+    @NotNull(message = "A data de nascimento não pode ser vazia")
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private LocalDate nascimento;
 
-    public Long getCpf() {
+    public String getCpf() {
         return cpf;
     }
 
-    public void setCpf(Long cpf) {
+    public void setCpf(String cpf) {
         this.cpf = cpf;
     }
 
@@ -47,11 +60,11 @@ public class PessoaModel {
         this.nome = nome;
     }
 
-    public String getNascimento() {
+    public LocalDate getNascimento() {
         return nascimento;
     }
 
-    public void setNascimento(String nascimento) {
+    public void setNascimento(LocalDate nascimento) {
         this.nascimento = nascimento;
     }
 }
