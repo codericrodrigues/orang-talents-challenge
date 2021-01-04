@@ -20,18 +20,28 @@ public class PessoaController {
 
     @GetMapping(path = "/")
     public Iterable<PessoaModel> obtemTodos() {
-        var pessoas = this.pessoaRepository.findAll();
-        return pessoas;
+        return this.pessoaRepository.findAll();
     }
 
     @PostMapping(path = "/")
     public PessoaModel salvar(@Valid @RequestBody PessoaModel pessoa) {
-        return this.pessoaRepository.save(pessoa);
+        boolean existsCpf = this.pessoaRepository.existsById(pessoa.getCpf());
+        boolean existsEmail = this.pessoaRepository.existsByEmail(pessoa.getEmail());
+
+        if(existsCpf) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CPF ja existe no banco de dados!");
+        } else if (existsEmail) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-mail ja existe no banco de dados!");
+        } else {
+            return this.pessoaRepository.save(pessoa);
+        }
     }
 
     @DeleteMapping(path = "/{cpf}")
     public void deletarPeloCPF(@PathVariable("cpf") String cpf) {
-        if(this.pessoaRepository.existsById(cpf)) {
+        boolean existsCpf = this.pessoaRepository.existsById(cpf);
+
+        if(existsCpf) {
             this.pessoaRepository.deleteById(cpf);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pessoa não encontrada!");

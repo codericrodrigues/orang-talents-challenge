@@ -13,7 +13,6 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "pessoa")
 public class PessoaModel {
-
     @Id
     @Column(name = "cpf")
     @NotNull(message = "O CPF não pode ser vazio")
