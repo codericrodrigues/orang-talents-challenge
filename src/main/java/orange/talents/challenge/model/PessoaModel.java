@@ -19,7 +19,7 @@ public class PessoaModel {
     @CPF(message = "CPF Inválido")
     private String cpf;
 
-    @Column(name = "email", length = 128, unique = true)
+    @Column(name = "email")
     @NotNull(message = "O E-mail não pode ser vazio")
     @Email(message = "E-mail Inválido")
     private String email;

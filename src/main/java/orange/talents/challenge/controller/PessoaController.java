@@ -4,10 +4,8 @@ import orange.talents.challenge.model.PessoaModel;
 import orange.talents.challenge.repository.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
@@ -23,8 +21,19 @@ public class PessoaController {
         return this.pessoaRepository.findAll();
     }
 
+    @GetMapping(path = "/{cpf}")
+    public PessoaModel obtemPorCPF(@PathVariable String cpf) {
+        boolean existsCpf = this.pessoaRepository.existsById(cpf);
+
+        if(existsCpf) {
+            return this.pessoaRepository.findById(cpf).get();
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pessoa não encontrada!");
+        }
+    }
+
     @PostMapping(path = "/")
-    public PessoaModel salvar(@Valid @RequestBody PessoaModel pessoa) {
+    public ResponseEntity<PessoaModel> salvar(@Valid @RequestBody PessoaModel pessoa) {
         boolean existsCpf = this.pessoaRepository.existsById(pessoa.getCpf());
         boolean existsEmail = this.pessoaRepository.existsByEmail(pessoa.getEmail());
 
@@ -33,7 +42,8 @@ public class PessoaController {
         } else if (existsEmail) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-mail ja existe no banco de dados!");
         } else {
-            return this.pessoaRepository.save(pessoa);
+            PessoaModel p = this.pessoaRepository.save(pessoa);
+            return new ResponseEntity(p, HttpStatus.CREATED);
         }
     }
 
